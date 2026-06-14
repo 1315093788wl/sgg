@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>中国邮政实习生资费(职院区) | 资费助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', 'PingFang SC', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: #f0f2f5;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: #ffffff;
+            border-radius: 18px;
+            box-shadow: 0 8px 30px rgba(0, 80, 40, 0.15);
+            overflow: hidden;
+        }
+
+        /* 头部样式 */
+        .header {
+            background: #00703c;
+            padding: 28px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .header svg {
+            width: 36px;
+            height: 36px;
+            fill: #ffffff;
+        }
+
+        .header h1 {
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        /* 表单区域 */
+        .form-section {
+            padding: 40px 50px;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #333333;
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        /* 保费提示样式 */
+        .insurance-tip {
+            font-size: 14px;
+            color: #ff6b6b;
+            margin-top: 5px;
+            font-weight: 400;
+        }
+
+        #region, #package-type {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 17px;
+            background: #f9fafb;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        #region:focus, #package-type:focus, #insurance-value:focus {
+            outline: none;
+            border-color: #00703c;
+            background: #ffffff;
+        }
+
+        .weight-input-wrapper, .insurance-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        #weight, #insurance-value {
+            flex: 1;
+            padding: 14px 18px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 17px;
+            background: #f9fafb;
+            transition: all 0.2s ease;
+        }
+
+        .unit {
+            color: #00703c;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        #calculate-btn {
+            width: 100%;
+            padding: 16px;
+            background: #00703c;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 19px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        #calculate-btn:hover {
+            background: #008547;
+            transform: translateY(-2px);
+        }
+
+        /* 结果显示区域 */
+        .result-section {
+            padding: 0 50px 40px;
+            display: none;
+        }
+
+        .result-card {
+            border: 2px solid #00703c;
+            border-radius: 12px;
+            padding: 30px;
+            background: #fafdfb;
+        }
+
+        .result-card h3 {
+            color: #00703c;
+            font-size: 22px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px dashed #00703c;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            font-size: 16px;
+        }
+
+        .info-row .label {
+            color: #666666;
+        }
+
+        .info-row .value {
+            color: #333333;
+            font-weight: 500;
+        }
+
+        /* 包材/保费结果行样式 */
+        .extra-row {
+            border-top: 1px dashed #e5e7eb;
+            padding-top: 12px;
+            margin-top: 12px;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 2px solid #e5e7eb;
+        }
+
+        .price-row .label {
+            color: #333333;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .price {
+            color: #00703c;
+            font-size: 38px;
+            font-weight: bold;
+        }
+
+        /* 二维码区域 */
+        .qrcode-section {
+            padding: 0 50px 40px;
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .qrcode-card {
+            flex: 1;
+            min-width: 280px;
+            max-width: 350px;
+            border: 2px solid #00703c;
+            border-radius: 12px;
+            padding: 25px 20px;
+            background: #ffffff;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .qrcode-card:hover {
+            box-shadow: 0 4px 15px rgba(0, 112, 60, 0.2);
+        }
+
+        .qrcode-card h4 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: #00703c;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 18px;
+        }
+
+        .qrcode-card img {
+            width: 100%;
+            max-width: 260px;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        /* 页脚署名 */
+        .footer {
+            width: 100%;
+            max-width: 900px;
+            margin-top: 15px;
+            padding-right: 20px;
+            text-align: right;
+            font-size: 15px;
+            color: #00703c;
+            font-weight: 500;
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 650px) {
+            .header h1 {
+                font-size: 20px;
+            }
+            .form-section {
+                padding: 30px 25px;
+            }
+            .result-section, .qrcode-section {
+                padding: 0 25px 30px;
+            }
+            .price {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"/>
+                <path d="M464 336a48 48 0 1 1 96 0 48 48 0 1 1-96 0zm72 112h-48c-4.4 0-8 3.6-8 8v272c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V456c0-4.4-3.6-8-8-8z"/>
+            </svg>
+            <h1>中国邮政实习生资费(职院区)</h1>
+        </div>
+
+        <!-- 表单区域 -->
+        <div class="form-section">
+            <div class="form-group">
+                <label for="region">
+                    <span>📦</span>
+                    寄达区域
+                </label>
+                <select id="region">
+                    <option value="" disabled selected>请选择寄达区域</option>
+                    <option value="1">湖北省内</option>
+                    <!-- 已按照要求取消“江西、湖南、安徽、河南、重庆、陕西”这一行下拉选项 -->
+                    <option value="3">北京、天津、河北、山西、辽宁、福建、山东、广东、四川、广西、海南、宁夏、云南、甘肃、青海、上海、江苏、浙江、贵州、内蒙古</option>
+                    <option value="4">西藏、吉林、黑龙江</option>
+                    <option value="5">新疆</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="weight">
+                    <span>⚖️</span>
+                    包裹重量
+                </label>
+                <div class="weight-input-wrapper">
+                    <input type="number" id="weight" step="0.1" min="0.1" placeholder="请输入重量">
+                    <span class="unit">kg</span>
+                </div>
+            </div>
+
+            <!-- 包材选择 -->
+            <div class="form-group">
+                <label for="package-type">
+                    <span>📦</span>
+                    包材类型
+                </label>
+                <select id="package-type">
+                    <option value="0" selected>不需要箱子（0元）</option>
+                    <option value="3">小号箱子（3元）</option>
+                    <option value="5">中号箱子（5元）</option>
+                    <option value="8">大号箱子（8元）</option>
+                </select>
+            </div>
+
+            <!-- 保费输入 -->
+            <div class="form-group">
+                <label for="insurance-value">
+                    <span>🔒</span>
+                    保价金额（元）
+                </label>
+                <div class="insurance-input-wrapper">
+                    <input type="number" id="insurance-value" step="1" min="0" placeholder="不需要保价请留空或输入0">
+                    <span class="unit">元</span>
+                </div>
+                <div class="insurance-tip">提示：贵重物品一定要保价</div>
+            </div>
+
+            <button id="calculate-btn">
+                <span>💰</span>
+                计算资费
+            </button>
+        </div>
+
+        <!-- 结果显示区域 -->
+        <div class="result-section" id="result-section">
+            <div class="result-card">
+                <h3>📮 寄件信息</h3>
+                
+                <div class="info-row">
+                    <span class="label">寄达路线：</span>
+                    <span class="value" id="result-route"></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">包裹重量：</span>
+                    <span class="value" id="result-weight"></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">首重价格：</span>
+                    <span class="value" id="result-first"></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">续重价格：</span>
+                    <span class="value" id="result-continue"></span>
+                </div>
+
+                <!-- 包材费用结果 -->
+                <div class="info-row extra-row">
+                    <span class="label">包材费用：</span>
+                    <span class="value" id="result-package"></span>
+                </div>
+
+                <!-- 保费结果 -->
+                <div class="info-row extra-row">
+                    <span class="label">保价费用：</span>
+                    <span class="value" id="result-insurance"></span>
+                </div>
+
+                <div class="price-row">
+                    <span class="label">总资费：</span>
+                    <span class="price" id="result-price"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 二维码区域 -->
+        <div class="qrcode-section">
+            <div class="qrcode-card">
+                <h4>
+                    <span>📱</span>
+                    邮费支付
+                </h4>
+                <img src="data:image/png;base64,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
